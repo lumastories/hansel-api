@@ -2,7 +2,11 @@ from api.models import FeedingProgram, Profile
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
+from django.db.models import Q
 
+
+def index(request):
+    return render(request, 'api/index.html')
 
 class UserCreateMixin(object):
     """
@@ -35,10 +39,14 @@ class FeedingProgramSerializer(serializers.ModelSerializer):
         fields = ['name', 'country']
 
 class FeedingProgramViewSet(UserCreateMixin, viewsets.ModelViewSet):
+    """
+        Returns FeedingPrograms owned by you or by someone in your team
+    """
     serializer_class = FeedingProgramSerializer
     user_field = 'user'
     def get_queryset(self):
-        return FeedingProgram.objects.filter(user=self.request.user)
+        team = self.request.user.profile.team
+        return FeedingProgram.objects.filter(Q(user=self.request.user) | Q(user__profile__team=team))
 
     def perform_create(self, serializer):
         kwargs = {
