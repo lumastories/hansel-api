@@ -32,7 +32,7 @@ class UserCreateMixin(object):
 class FeedingProgramSerializer(serializers.ModelSerializer):
     class Meta:
         model = FeedingProgram
-        fields = '__all__' #['name', 'country']
+        fields = ['name', 'country']
 
 class FeedingProgramViewSet(UserCreateMixin, viewsets.ModelViewSet):
     serializer_class = FeedingProgramSerializer
