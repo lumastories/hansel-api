@@ -1,20 +1,40 @@
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_profile(sender, instance=None, created=False, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+class NameMixin(object):
+    def __str__(self):
+        return self.name
+
+
+class Team(NameMixin, models.Model):
+    name = models.CharField(max_length=1024)
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
-    extra = JSONField()
+    team = models.ForeignKey(Team, null=True, blank=True)
+    
+    def __str__(self):
+        return self.user.username
 
 
-class FeedingProgram(models.Model):
-    team = models.ManyToManyField(User)
+class FeedingProgram(NameMixin, models.Model):
+    user = models.ForeignKey(User)
     name = models.CharField(max_length=1024)
     country = models.CharField(max_length=1024)
 
 
-class Location(models.Model):
+class Location(NameMixin, models.Model):
     name = models.CharField(max_length=1024)
     latitude = models.IntegerField()
     longitude = models.IntegerField()
@@ -23,28 +43,35 @@ class Location(models.Model):
 
 class Photo(models.Model):
     image = models.FileField()
-    
+    def __str__(self):
+        return str(self.image)
 
 class Day(models.Model):
-    date_time = models.DateField()
+    date_time = models.DateTimeField()
+
+    def __str__(self):
+        return str(self.date_time)
 
 
 class Kid(models.Model):
-    height = models.IntegerField()
-    first_name = models.CharField(max_length=1024)
-    last_name = models.CharField(max_length=1024)
-    notes = models.CharField(max_length=1024)
-    weight = models.IntegerField()
-    age = models.IntegerField()
+    height = models.IntegerField(blank=True,null=True)
+    first_name = models.CharField(max_length=1024,blank=True,null=True)
+    last_name = models.CharField(max_length=1024,blank=True,null=True)
+    notes = models.CharField(max_length=1024,blank=True,null=True)
+    weight = models.IntegerField(blank=True,null=True)
+    age = models.IntegerField(blank=True,null=True)
+
+    def __str__(self):
+        return self.first_name
 
 
 class FeedingRecord(models.Model):
-    weight = models.IntegerField()
+    weight = models.IntegerField(null=True, blank=True)
     date_time = models.DateField()
     day = models.ForeignKey(Day)
     kid = models.ForeignKey(Kid)
     location = models.ForeignKey(Location)
-    photo = models.ForeignKey(Photo)
+    photo = models.ForeignKey(Photo, null=True, blank=True)
 
 
 
