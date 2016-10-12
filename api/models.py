@@ -46,12 +46,6 @@ class Photo(models.Model):
     def __str__(self):
         return str(self.image)
 
-class Day(models.Model):
-    date_time = models.DateTimeField()
-
-    def __str__(self):
-        return str(self.date_time)
-
 
 class Kid(models.Model):
     height = models.IntegerField(blank=True,null=True)
@@ -68,7 +62,6 @@ class Kid(models.Model):
 class FeedingRecord(models.Model):
     weight = models.IntegerField(null=True, blank=True)
     date_time = models.DateField()
-    day = models.ForeignKey(Day)
     kid = models.ForeignKey(Kid)
     location = models.ForeignKey(Location)
     photo = models.ForeignKey(Photo, null=True, blank=True)
