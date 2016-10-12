@@ -1,4 +1,4 @@
-from api.models import FeedingProgram, Profile
+from api.models import Location, Photo, Participant, Record
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
@@ -8,42 +8,66 @@ from django.db.models import Q
 def index(request):
     return render(request, 'api/index.html')
 
-class UserCreateMixin(object):
-    """
-    By default the user field is "user" you can change it
-    to your model "user" field.
 
-    Usage:
-    class PostViewSet(UserCreateMixin, viewsets.ModelViewSet):
-    # ViewsSet required info...
-    user_field = 'creator'
-    """
-    user_field = 'user'
-
-    def get_user_field(self):
-        """
-        You can dynamically change the user field
-        """
-        return self.user_field
-
-    def perform_create(self, serializer):
-        kwargs = {
-            self.get_user_field(): self.request.user
-        }
-        serializer.save(**kwargs)
-
-
-class FeedingProgramSerializer(serializers.ModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FeedingProgram
-        fields = ['name', 'country']
+        model = Location
+        fields = ['name', 'latitude', 'longitude']
 
-class FeedingProgramViewSet(UserCreateMixin, viewsets.ModelViewSet):
+    def create(self, validated_data):
+        location = Location(**validated_data)
+        location.save()
+        location.users.add(self.context['request'].user)
+        return location
+
+
+class LocationViewSet(viewsets.ModelViewSet):
     """
-        Returns FeedingPrograms owned by you or by someone in your team
+        Returns Locations owned by you.
     """
-    serializer_class = FeedingProgramSerializer
-    user_field = 'user'
+    serializer_class = LocationSerializer
     def get_queryset(self):
-        team = self.request.user.profile.team
-        return FeedingProgram.objects.filter(Q(user=self.request.user) | Q(user__profile__team=team))
+        return self.request.user.location_set.all()
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Photo
+        fields = '__all__'
+
+
+class PhotoViewSet(viewsets.ModelViewSet):
+    """
+        Returns Photos owned by you.
+    """
+    serializer_class = PhotoSerializer
+    queryset = Photo.objects.all()
+
+
+class ParticipantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participant
+        fields = '__all__'
+
+
+class ParticipantViewSet(viewsets.ModelViewSet):
+    """
+        Returns Participants owned by you.
+    """
+    serializer_class = ParticipantSerializer
+    queryset = Participant.objects.all()
+
+class RecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Record
+        fields = '__all__'
+
+
+class RecordViewSet(viewsets.ModelViewSet):
+    """
+        Returns Records owned by you.
+    """
+    serializer_class = RecordSerializer
+    queryset = Record.objects.all()
+
+    
