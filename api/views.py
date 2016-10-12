@@ -47,9 +47,3 @@ class FeedingProgramViewSet(UserCreateMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         team = self.request.user.profile.team
         return FeedingProgram.objects.filter(Q(user=self.request.user) | Q(user__profile__team=team))
-
-    def perform_create(self, serializer):
-        kwargs = {
-          'user': self.request.user # Change 'user' to you model user field.
-        }
-        serializer.save(**kwargs)
