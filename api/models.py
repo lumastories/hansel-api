@@ -43,7 +43,7 @@ class Participant(NameMixin, models.Model):
     location = models.ForeignKey(Location, null=True, blank=True)
 
 
-class Record(models.Model):
+class FeedingRecord(models.Model):
     weight = models.IntegerField(null=True, blank=True)
     date_time = models.DateField()
     participant = models.ForeignKey(Participant)

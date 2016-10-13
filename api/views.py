@@ -1,4 +1,4 @@
-from api.models import Location, Photo, Participant, Record
+from api.models import Location, Photo, Participant, FeedingRecord
 from django.contrib.auth.models import User
 from django.shortcuts import render
 from rest_framework import viewsets, serializers
@@ -57,17 +57,17 @@ class ParticipantViewSet(viewsets.ModelViewSet):
     serializer_class = ParticipantSerializer
     queryset = Participant.objects.all()
 
-class RecordSerializer(serializers.ModelSerializer):
+class FeedingRecordSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Record
+        model = FeedingRecord
         fields = '__all__'
 
 
-class RecordViewSet(viewsets.ModelViewSet):
+class FeedingRecordViewSet(viewsets.ModelViewSet):
     """
-        Returns Records owned by you.
+        Returns FeedingRecords owned by you.
     """
-    serializer_class = RecordSerializer
-    queryset = Record.objects.all()
+    serializer_class = FeedingRecordSerializer
+    queryset = FeedingRecord.objects.all()
 
     

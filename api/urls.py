@@ -6,6 +6,6 @@ router = DefaultRouter()
 router.register(r'location', views.LocationViewSet, base_name='location')
 router.register(r'photo', views.PhotoViewSet, base_name='photo')
 router.register(r'participant', views.ParticipantViewSet, base_name='participant')
-router.register(r'record', views.RecordViewSet, base_name='record')
+router.register(r'feedingrecord', views.FeedingRecordViewSet, base_name='feedingrecord')
 
 urlpatterns = router.urls

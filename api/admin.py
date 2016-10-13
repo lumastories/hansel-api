@@ -9,5 +9,5 @@ class ParticipantAdmin(admin.ModelAdmin):
 admin.site.register(Profile)
 admin.site.register(Location)
 admin.site.register(Photo)
-admin.site.register(Record)
+admin.site.register(FeedingRecord)
 admin.site.register(Participant, ParticipantAdmin)
